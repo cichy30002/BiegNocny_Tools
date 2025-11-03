@@ -153,21 +153,30 @@ class FractionCypher(Cypher):
             text = text.replace(pl_char, repl_char)
         return text
 
-    def to_oMath(fractions: list) -> OxmlElement:
+    def to_oMath(self, fractions: list) -> OxmlElement:
         oMath = OxmlElement('m:oMath')
 
         for num_val, den_val in fractions:
-            f = OxmlElement('m:f')  # Fraction
+            f = OxmlElement('m:f')
+
             num = OxmlElement('m:num')
             den = OxmlElement('m:den')
+
+            num_r = OxmlElement('m:r')
+            den_r = OxmlElement('m:r')
+
             num_t = OxmlElement('m:t')
             den_t = OxmlElement('m:t')
 
             num_t.text = str(num_val)
             den_t.text = str(den_val)
 
-            num.append(num_t)
-            den.append(den_t)
+            num_r.append(num_t)
+            den_r.append(den_t)
+
+            num.append(num_r)
+            den.append(den_r)
+
             f.append(num)
             f.append(den)
             oMath.append(f)
@@ -179,7 +188,6 @@ class ReverseWordsCypher(Cypher):
         super().__init__()
     
     def encrypt(self, plaintext: str) -> str:
-        plaintext = self.prepare_text(plaintext)
         words = plaintext.split(' ')
         reversed_words = [word[::-1] for word in words]
         return ' '.join(reversed_words)
@@ -220,7 +228,7 @@ class MoorseCypher(Cypher):
         return plaintext
 
 
-class SyllableCypher(Cypher):
+class SyllabeCypher(Cypher):
     def __init__(self, keyword: str):
         super().__init__()
         self.keyword = self.prepare_text(keyword).upper()

@@ -1,5 +1,5 @@
 import pytest
-from Cyphers import CezarCypher, CellphoneCypher, FractionCypher, ReverseWordsCypher, MoorseCypher, SyllableCypher
+from Cyphers import CezarCypher, CellphoneCypher, FractionCypher, ReverseWordsCypher, MoorseCypher, SyllabeCypher
 
 @pytest.mark.parametrize("shift,ciphertext,expected", [
     (3, "Khoor", "Hello"),                          # basic mixed-case
@@ -106,8 +106,7 @@ def test_encrypt_basic_cases(input_text, expected_encrypt):
 def test_decrypt_is_inverse_of_encrypt(sample):
     rw = ReverseWordsCypher()
     encrypted = rw.encrypt(sample)
-    # decrypt should reverse the encryption, returning the prepared form of the original
-    assert rw.decrypt(encrypted) == rw.prepare_text(sample)
+    assert rw.decrypt(encrypted) == sample
 
 @pytest.mark.parametrize("plaintext,expected", [
     ("SOS", "... --- ..."),
@@ -144,10 +143,10 @@ def test_moorse_decrypt_ignores_unknown_tokens():
     assert mc.decrypt(".- .....- -..") == "AD"
 def test_odd_length_keyword_raises_assertion():
     with pytest.raises(AssertionError):
-        SyllableCypher("ABC")  # length 3 -> should assert
+        SyllabeCypher("ABC")  # length 3 -> should assert
 
 def test_pair_swapping_and_self_mapping():
-    sc = SyllableCypher("AZBY")  # pairs: A<->Z, B<->Y
+    sc = SyllabeCypher("AZBY")  # pairs: A<->Z, B<->Y
     # paired mappings
     assert sc.char_map['A'] == 'Z'
     assert sc.char_map['Z'] == 'A'
@@ -158,7 +157,7 @@ def test_pair_swapping_and_self_mapping():
     assert sc.reverse_map['Z'] == 'A'  # reverse_map should map encrypted back to original
 
 def test_encrypt_decrypt_inverse_for_various_inputs():
-    sc = SyllableCypher("MNOPQR")  # pairs M<->N, O<->P, Q<->R
+    sc = SyllabeCypher("MNOPQR")  # pairs M<->N, O<->P, Q<->R
     samples = [
         "Hello",
         "Zażółć gęślą jaźń",  # contains polish diacritics -> prepared/normalized
@@ -173,7 +172,7 @@ def test_encrypt_decrypt_inverse_for_various_inputs():
         assert dec == sc.prepare_text(s).upper()
 
 def test_encrypt_preserves_nonletters_and_case_normalization():
-    sc = SyllableCypher("UVWX")  # U<->V, W<->X
+    sc = SyllabeCypher("UVWX")  # U<->V, W<->X
     original = "Hi!"
     encrypted = sc.encrypt(original)
     # punctuation preserved and letters normalized to uppercase before mapping
